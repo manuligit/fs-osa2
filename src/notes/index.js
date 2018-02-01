@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import AppClass from './AppClass'
 
 const notes = [
   {
@@ -24,6 +24,6 @@ const notes = [
 ]
 
 ReactDOM.render(
-    <App notes={notes} />,
+    <AppClass notes={notes} />,
     document.getElementById('root')
   )
