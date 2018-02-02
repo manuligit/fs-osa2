@@ -1,2 +1,3 @@
 // Select one of React projects by importing it:
-import "./puhelinluettelo"
+//import "./puhelinluettelo"
+import "./maat"
