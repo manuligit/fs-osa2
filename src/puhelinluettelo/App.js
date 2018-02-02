@@ -5,17 +5,22 @@ class App extends React.Component {
     super(props)
     this.state = {
       persons: [
-        { name: 'Arto Hellas' }
+        { name: 'Arto Hellas', number: '040-123456' },
+        { name: 'Martti Tienari', number: '040-123456' },
+        { name: 'Arto Järvinen', number: '040-123456' },
+        { name: 'Lea Kutvonen', number: '040-123456' }
       ],
-      newName: ''
-    }
+      newName: '',
+      newNumber: '',
+      filter: ''
   }
-
+  }
   addContact = (event) => {
     event.preventDefault()
 
     const contactObject = {
-        name: this.state.newName
+        name: this.state.newName,
+        number: this.state.newNumber
     }
 
     function isSame(person) {
@@ -26,19 +31,20 @@ class App extends React.Component {
     if (this.state.persons.find(isSame)) {
         console.log("same name")
         this.setState({newName: ''})
+    } else if (contactObject.number === '' || contactObject.name === ''){
+        console.log("no number or name")
     } else {
         var temp = this.state.persons.concat(contactObject)
-        this.setState({ persons: temp, newName: ''})
+        this.setState({ persons: temp, newName: '', newNumber: ''})
     }
   }
 
-
-
-
-
-  handleContactChange = (event) => {
-    console.log(event.target.value)
+  handleNameChange = (event) => {
+    //console.log(event.target.value)
     this.setState({ newName: event.target.value})
+  }
+  handleNumberChange = (event) => {
+    this.setState({ newNumber: event.target.value})
   }
 
   render() {
@@ -47,7 +53,10 @@ class App extends React.Component {
         <h2>Puhelinluettelo</h2>
         <form onSubmit={this.addContact}>
           <div>
-            nimi: <input value={this.state.newName} onChange={this.handleContactChange} />
+            nimi: <input value={this.state.newName} onChange={this.handleNameChange} />
+          </div>
+          <div>
+            numero: <input value={this.state.newNumber} onChange={this.handleNumberChange}/>
           </div>
           <div>
             <button type="submit">lisää</button>
@@ -55,9 +64,8 @@ class App extends React.Component {
         </form>
         <h2>Numerot</h2>
             <ul>
-                {this.state.persons.map((person) => {return (<li key={person.name}>{person.name}</li>)})}
+                {this.state.persons.map((person) => {return (<li key={person.name}>{person.name} {person.number}</li>)})}
             </ul>
-        <p>debug: {this.state.newName}</p> 
       </div>
     )
   }
