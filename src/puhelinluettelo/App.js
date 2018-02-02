@@ -6,9 +6,9 @@ class App extends React.Component {
     this.state = {
       persons: [
         { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'Martti Tienari', number: '040-123456' },
-        { name: 'Arto Järvinen', number: '040-123456' },
-        { name: 'Lea Kutvonen', number: '040-123456' }
+        { name: 'Martti Tienari', number: '040-123457' },
+        { name: 'Arto Järvinen', number: '040-123458' },
+        { name: 'Lea Kutvonen', number: '040-123459' }
       ],
       newName: '',
       newNumber: '',
@@ -43,14 +43,33 @@ class App extends React.Component {
     //console.log(event.target.value)
     this.setState({ newName: event.target.value})
   }
+  
   handleNumberChange = (event) => {
     this.setState({ newNumber: event.target.value})
   }
 
+  filter = (event) => {
+    this.setState({ filter: event.target.value})
+  }
+
   render() {
+    //function containsLetters(value) {
+    //    value.toString().toLowerCase()
+    //    return value.includes(this.state.filter.toLowerCase())
+    //}
+
+
+    const filterResults = this.state.filter? this.state.persons.filter(value => {
+        return value.name.toString().toLowerCase().includes(this.state.filter.toLowerCase())
+    }) : this.state.persons
+
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <div>
+          Rajaa tuloksia: <input value={this.state.filter} onChange={this.filter} />
+        </div>
+        <h3>Uusi kontakti</h3>
         <form onSubmit={this.addContact}>
           <div>
             nimi: <input value={this.state.newName} onChange={this.handleNameChange} />
@@ -63,9 +82,11 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-            <ul>
-                {this.state.persons.map((person) => {return (<li key={person.name}>{person.name} {person.number}</li>)})}
-            </ul>
+        <table>
+            <tbody>
+            {filterResults.map((person, index) => {return (<tr key={person.name}><td>{person.name}</td><td>{person.number}</td></tr>)})}
+            </tbody>
+        </table>
       </div>
     )
   }
