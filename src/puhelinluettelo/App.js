@@ -1,4 +1,5 @@
 import React from 'react';
+import Contacts from './components/Contacts';
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +14,7 @@ class App extends React.Component {
       newName: '',
       newNumber: '',
       filter: ''
-  }
+    }
   }
   addContact = (event) => {
     event.preventDefault()
@@ -53,12 +54,6 @@ class App extends React.Component {
   }
 
   render() {
-    //function containsLetters(value) {
-    //    value.toString().toLowerCase()
-    //    return value.includes(this.state.filter.toLowerCase())
-    //}
-
-
     const filterResults = this.state.filter? this.state.persons.filter(value => {
         return value.name.toString().toLowerCase().includes(this.state.filter.toLowerCase())
     }) : this.state.persons
@@ -82,11 +77,7 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-        <table>
-            <tbody>
-            {filterResults.map((person, index) => {return (<tr key={person.name}><td>{person.name}</td><td>{person.number}</td></tr>)})}
-            </tbody>
-        </table>
+        <Contacts filterResults={filterResults} />
       </div>
     )
   }
