@@ -6,7 +6,8 @@ class App extends React.Component {
     super(props)
     this.state = {
       countries: [],
-      search: ''
+      search: '',
+      selected: {name: ''}
     }
   }
 
@@ -19,11 +20,24 @@ class App extends React.Component {
   }
 
   handleChange = (event) => {
-    this.setState({ search: event.target.value})
+    this.setState({ search: event.target.value,
+                    selected: {name: ''}})
     //console.log(event.target.value)
   }
 
+  clickCountry = (country, event) => {
+    // set clicked country as 'selected'
+    this.setState({ selected: country})
+    console.log(this.state.selected)
+  }
+
+  setSelected = (country) => () => {
+    console.log('country ', country)
+    this.setState({ selected: country })
+  }
+
   render() {
+    //console.log(this.state.selected)
     //console.log(this.state.search)
     var found = []
     found = this.state.search?
@@ -31,17 +45,8 @@ class App extends React.Component {
                   return item.name.toLowerCase().includes(this.state.search.toLowerCase())
                 }) : []
 
-    //console.log(found)
-
-    if (found.length > 10) {
-      found = []
-      return (
-        <div> find countries 
-          <input value={this.state.search} onChange={this.handleChange}/>
-          <p>Too many countries</p>
-        </div>
-      )
-    } else if (found.length === 1) {
+    //if only one match, show it similar to selected one
+    if (found.length === 1) {
       return ( 
         <div> find countries 
           <input value={this.state.search} onChange={this.handleChange}/>
@@ -56,16 +61,43 @@ class App extends React.Component {
         </div>
       )
     }
-        
+
+    //show item after clicked div:
+    if (this.state.selected.name.length > 0) {
+      return ( 
+        <div> find countries 
+          <input value={this.state.search} onChange={this.handleChange}/>
+          <div>
+            <h1>{this.state.selected.name}</h1>
+            <p>
+              capital: {this.state.selected.capital}<br />
+              population: {this.state.selected.population}
+            </p>
+            <img src={this.state.selected.flag} alt={this.state.selected.name} width="800"/>
+          </div>
+        </div>
+      )
+    }
+
+    //don;t show anything if too many items:
+    if (found.length > 10) {
+      found = []
+      return (
+        <div> find countries 
+          <input value={this.state.search} onChange={this.handleChange}/>
+          <p>Too many countries</p>
+        </div>
+      )
+    } 
+    
+    //clicking a div creates one country as selected
     return (
       <div> find countries 
         <input value={this.state.search} onChange={this.handleChange}/>
-         {found.map((country => <div key={country.name} > {country.name} </div>))}
+         {found.map((country => <div value={this.state.selected} onClick={(e) => this.clickCountry(country, e)} key={country.name} > {country.name} </div>))}
       </div>
     )
   }
 }
-
-
 
 export default App
