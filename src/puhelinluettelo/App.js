@@ -1,21 +1,18 @@
 import React from 'react';
 import Contacts from './components/Contacts';
+import axios from 'axios'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'Martti Tienari', number: '040-123457' },
-        { name: 'Arto Järvinen', number: '040-123458' },
-        { name: 'Lea Kutvonen', number: '040-123459' }
-      ],
+      persons: [],
       newName: '',
       newNumber: '',
       filter: ''
     }
   }
+  
   addContact = (event) => {
     event.preventDefault()
 
@@ -53,11 +50,21 @@ class App extends React.Component {
     this.setState({ filter: event.target.value})
   }
 
+  componentDidMount() {
+    console.log('mount')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('got response')
+        this.setState({ persons: response.data })
+      })
+  }
+
+
   render() {
     const filterResults = this.state.filter? this.state.persons.filter(value => {
-        return value.name.toString().toLowerCase().includes(this.state.filter.toLowerCase())
-    }) : this.state.persons
-
+        return value.name.toString().toLowerCase().includes(this.state.filter.toLowerCase())}) : this.state.persons
+    
     return (
       <div>
         <h2>Puhelinluettelo</h2>
