@@ -15,36 +15,35 @@ class App extends React.Component {
   
   addContact = (event) => {
     event.preventDefault()
-
     const contactObject = {
-        name: this.state.newName,
-        number: this.state.newNumber
+      name: this.state.newName,
+      number: this.state.newNumber
     }
 
     function isSame(person) {
-        return person.name === contactObject.name;
+      return person.name === contactObject.name;
     }
 
     //If a person with same name exists, don't add to it to the contact list:
     if (this.state.persons.find(isSame)) {
-        console.log("same name")
-        this.setState({newName: ''})
+      console.log("same name")
+      this.setState({newName: ''})
     } else if (contactObject.number === '' || contactObject.name === ''){
-        console.log("no number or name")
+      console.log("no number or name")
     } else {
-        //post the contactobject to the server
-        var temp = this.state.persons.concat(contactObject)
+      //post the contactobject to the server
+      var temp = this.state.persons.concat(contactObject)
 
-        contactService.create(contactObject)
-          .then(newContact => {
-            this.setState({ 
-              persons: temp,
-              newName: '',
-              newNumber: ''
-            })
+      contactService.create(contactObject)
+        .then(newContact => {
+          this.setState({ 
+            persons: temp,
+            newName: '',
+            newNumber: ''
           })
+        })
+      }
     }
-  }
 
   handleNameChange = (event) => {
     //console.log(event.target.value)
@@ -67,10 +66,28 @@ class App extends React.Component {
       })
   }
 
+  deleteContact = (event) => {
+    var currentid = event.target.value
+    if (currentid) {
+      var kontakti = this.state.persons[currentid-1].name
+      var result = window.confirm(`Poistetaanko ${kontakti}?`)
+
+      if (result) {
+        contactService.remove(currentid)
+          .then(response => {
+            this.setState ({
+              persons: this.state.persons.filter(person => {
+                return person.id.toString() !== currentid.toString()
+              })})
+          }
+        )
+      }
+    }
+  }
 
   render() {
     const filterResults = this.state.filter? this.state.persons.filter(value => {
-        return value.name.toString().toLowerCase().includes(this.state.filter.toLowerCase())}) : this.state.persons
+      return value.name.toString().toLowerCase().includes(this.state.filter.toLowerCase())}) : this.state.persons
     
     return (
       <div>
@@ -91,7 +108,7 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-        <Contacts filterResults={filterResults} />
+        <Contacts filterResults={filterResults} deleteContact={this.deleteContact} />
       </div>
     )
   }
