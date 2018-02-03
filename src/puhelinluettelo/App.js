@@ -1,6 +1,6 @@
 import React from 'react';
 import Contacts from './components/Contacts';
-import axios from 'axios'
+import contactService from './services/contacts'
 
 class App extends React.Component {
   constructor(props) {
@@ -32,8 +32,17 @@ class App extends React.Component {
     } else if (contactObject.number === '' || contactObject.name === ''){
         console.log("no number or name")
     } else {
+        //post the contactobject to the server
         var temp = this.state.persons.concat(contactObject)
-        this.setState({ persons: temp, newName: '', newNumber: ''})
+
+        contactService.create(contactObject)
+          .then(newContact => {
+            this.setState({ 
+              persons: temp,
+              newName: '',
+              newNumber: ''
+            })
+          })
     }
   }
 
@@ -52,11 +61,9 @@ class App extends React.Component {
 
   componentDidMount() {
     console.log('mount')
-    axios
-      .get('http://localhost:3001/persons')
+    contactService.getAll()
       .then(response => {
-        console.log('got response')
-        this.setState({ persons: response.data })
+        this.setState({ persons: response})
       })
   }
 

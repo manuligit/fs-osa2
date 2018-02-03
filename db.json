@@ -19,15 +19,24 @@
       "name": "Lea Kutvonen",
       "number": "040-123456",
       "id": 4
+    },
+    {
+      "name": "asd",
+      "number": "123",
+      "id": 5
+    },
+    {
+      "name": "asdf",
+      "number": "1234",
+      "id": 6
     }
   ],
-
   "notes": [
     {
       "id": 1,
       "content": "HTML on helppoa",
       "date": "2017-12-10T17:30:31.098Z",
-      "important": true
+      "important": false
     },
     {
       "id": 2,
@@ -40,6 +49,26 @@
       "content": "HTTP-protokollan tärkeimmät metodit ovat GET ja POST",
       "date": "2017-12-10T19:20:14.298Z",
       "important": true
+    },
+    {
+      "content": "asd",
+      "important": true,
+      "id": 4
+    },
+    {
+      "content": "asdfsada",
+      "important": false,
+      "id": 5
+    },
+    {
+      "content": "ffff",
+      "important": false,
+      "id": 6
+    },
+    {
+      "content": "kjeh",
+      "important": true,
+      "id": 7
     }
-  ]  
+  ]
 }
