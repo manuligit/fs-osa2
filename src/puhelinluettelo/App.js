@@ -15,7 +15,7 @@ class App extends React.Component {
   
   addContact = (event) => {
     event.preventDefault()
-    const contactObject = {
+    let contactObject = {
       name: this.state.newName,
       number: this.state.newNumber
     }
@@ -27,6 +27,38 @@ class App extends React.Component {
     //If a person with same name exists, don't add to it to the contact list:
     if (this.state.persons.find(isSame)) {
       console.log("same name")
+      var result = window.confirm(`${contactObject.name} on jo luettelossa, korvataanko vanha numero uudella?`)
+
+      if (result) {
+        //copy persons to add updated contactobject to state
+        var persons_copy = this.state.persons.slice(0)
+
+        // get the id from the original person
+        var found = persons_copy.find(isSame)
+        let foundid = found.id
+
+        // update id to contactobject
+        contactObject = {
+          name: this.state.newName,
+          number: this.state.newNumber,
+          id: foundid
+        }
+
+        // find index of contactobject in the state
+        let index = persons_copy.findIndex(isSame)
+        persons_copy[index] = contactObject;
+
+        // update data on server based on id and the new object
+        contactService.update(foundid, contactObject)
+          .then(response => {
+            this.setState({ 
+              persons: persons_copy,
+              newName: '',
+              newNumber: ''
+            })
+          })
+          //console.log(this.state.persons)
+      } 
       this.setState({newName: ''})
     } else if (contactObject.number === '' || contactObject.name === ''){
       console.log("no number or name")
@@ -59,7 +91,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    console.log('mount')
+    //console.log('mount')
     contactService.getAll()
       .then(response => {
         this.setState({ persons: response})
