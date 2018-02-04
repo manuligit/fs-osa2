@@ -1,6 +1,8 @@
 import React from 'react';
 import Contacts from './components/Contacts';
+import Notification from './components/Notification'
 import contactService from './services/contacts'
+import './index.css'
 
 class App extends React.Component {
   constructor(props) {
@@ -9,7 +11,8 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      filter: ''
+      filter: '',
+      message: null
     }
   }
   
@@ -50,13 +53,19 @@ class App extends React.Component {
 
         // update data on server based on id and the new object
         contactService.update(foundid, contactObject)
+
           .then(response => {
             this.setState({ 
               persons: persons_copy,
               newName: '',
               newNumber: ''
             })
-          })
+          }).then(
+            this.setState({ message: `yhteystietoa ${contactObject.name} päivitetty` }),
+            setTimeout(() => {
+              this.setState({ message: null })
+            }, 5000)
+          )
           //console.log(this.state.persons)
       } 
       this.setState({newName: ''})
@@ -64,16 +73,21 @@ class App extends React.Component {
       console.log("no number or name")
     } else {
       //post the contactobject to the server
-      var temp = this.state.persons.concat(contactObject)
 
       contactService.create(contactObject)
         .then(newContact => {
+          console.log(newContact)
           this.setState({ 
-            persons: temp,
+            persons: this.state.persons.concat(newContact),
             newName: '',
             newNumber: ''
           })
-        })
+        }).then(
+          this.setState({ message: `Kontakti ${contactObject.name} lisätty` }),
+          setTimeout(() => {
+            this.setState({ message: null })
+          }, 5000)
+        )
       }
     }
 
@@ -100,9 +114,13 @@ class App extends React.Component {
 
   deleteContact = (event) => {
     var currentid = event.target.value
+    //console.log('currentid ', currentid)
     if (currentid) {
-      var kontakti = this.state.persons[currentid-1].name
-      var result = window.confirm(`Poistetaanko ${kontakti}?`)
+      //console.log(this.state.persons)
+      let person = this.state.persons.find(person => person.id.toString() === currentid.toString())
+      //console.log(person)
+      let kontakti = person && person.name
+      let result = window.confirm(`Poistetaanko ${kontakti}?`)
 
       if (result) {
         contactService.remove(currentid)
@@ -110,8 +128,13 @@ class App extends React.Component {
             this.setState ({
               persons: this.state.persons.filter(person => {
                 return person.id.toString() !== currentid.toString()
-              })})
+            })})
           }
+        ).then(
+          this.setState({ message: `yhteystieto ${kontakti} poistettu` }),
+            setTimeout(() => {
+              this.setState({ message: null })
+            }, 5000)
         )
       }
     }
@@ -123,6 +146,7 @@ class App extends React.Component {
     
     return (
       <div>
+        <Notification message={this.state.message} />
         <h2>Puhelinluettelo</h2>
         <div>
           Rajaa tuloksia: <input value={this.state.filter} onChange={this.filter} />
@@ -140,7 +164,7 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-        <Contacts filterResults={filterResults} deleteContact={this.deleteContact} />
+        <Contacts filterResults={filterResults} deleteContact={this.deleteContact.bind(this)} />
       </div>
     )
   }
