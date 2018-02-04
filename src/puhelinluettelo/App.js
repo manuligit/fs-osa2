@@ -53,7 +53,6 @@ class App extends React.Component {
 
         // update data on server based on id and the new object
         contactService.update(foundid, contactObject)
-
           .then(response => {
             this.setState({ 
               persons: persons_copy,
@@ -65,8 +64,11 @@ class App extends React.Component {
             setTimeout(() => {
               this.setState({ message: null })
             }, 5000)
-          )
-          //console.log(this.state.persons)
+          ).catch (error => {
+            this.setState({ 
+              message: `kontakti '${contactObject.name}' on jo valitettavasti poistettu palvelimelta`,
+              persons: this.state.persons.filter(n => n.id !== contactObject.id) })
+          })
       } 
       this.setState({newName: ''})
     } else if (contactObject.number === '' || contactObject.name === ''){
